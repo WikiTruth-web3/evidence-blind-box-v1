@@ -1,22 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-/**
- *         ██╗    ██╗██╗██╗  ██╗██╗    ████████╗██████╗ ██╗   ██╗████████╗██╗  ██╗
- *         ██║    ██║██║██║ ██╔╝██║    ╚══██╔══╝██╔══██╗██║   ██║╚══██╔══╝██║  ██║
- *         ██║ █╗ ██║██║█████╔╝ ██║       ██║   ██████╔╝██║   ██║   ██║   ███████║
- *         ██║███╗██║██║██╔═██╗ ██║       ██║   ██╔══██╗██║   ██║   ██║   ██╔══██║
- *         ╚███╔███╔╝██║██║  ██╗██║       ██║   ██║  ██║╚██████╔╝   ██║   ██║  ██║
- *          ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚═╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
- *
- *  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
- *  ┃                        Website: https://wikitruth.eth.limo/                         ┃
- *  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
- */
-
 pragma solidity ^0.8.24;
 
-import {IAddressManager} from "@marketplace-v1/interfaces/IAddressManager.sol";
-import {Error} from "@marketplace-v1/interfaces/Error.sol";
+import {IAddressManager} from "@interfaces/sapphire/IAddressManager.sol";
+import {Error} from "@interfaces/Error.sol";
 
 /**
  * @title Modifier

@@ -1,26 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-/**
- *         ██╗    ██╗██╗██╗  ██╗██╗    ████████╗██████╗ ██╗   ██╗████████╗██╗  ██╗
- *         ██║    ██║██║██║ ██╔╝██║    ╚══██╔══╝██╔══██╗██║   ██║╚══██╔══╝██║  ██║
- *         ██║ █╗ ██║██║█████╔╝ ██║       ██║   ██████╔╝██║   ██║   ██║   ███████║
- *         ██║███╗██║██║██╔═██╗ ██║       ██║   ██╔══██╗██║   ██║   ██║   ██╔══██║
- *         ╚███╔███╔╝██║██║  ██╗██║       ██║   ██║  ██║╚██████╔╝   ██║   ██║  ██║
- *          ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚═╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
- *
- *  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
- *  ┃                        Website: https://wikitruth.eth.limo/                         ┃
- *  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
- */
-
 pragma solidity ^0.8.24;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {
-    FundsType,
-    RewardType
-} from "@marketplace-v1/interfaces/IFundManager.sol";
+import {FundsType, RewardType} from "@interfaces/sapphire/IFundManager.sol";
 import {FundManager02} from "./FundManager02.sol";
 
 /**
@@ -42,7 +26,7 @@ contract FundManager03 is FundManager02 {
 
     /**
      * @dev Pay order amount
-     * @param boxId_ TruthBox ID
+     * @param boxId_ BlindBox ID
      * @param buyer_ Buyer address
      * @param amount_ Amount to pay
      */
@@ -62,7 +46,7 @@ contract FundManager03 is FundManager02 {
 
     /**
      * @dev Pay delay fee
-     * @param boxId_ TruthBox ID
+     * @param boxId_ BlindBox ID
      * @param sender_ Sender address
      * @param amount_ Amount to pay
      */
@@ -78,7 +62,7 @@ contract FundManager03 is FundManager02 {
             amount_
         );
 
-        bytes32 minterId = TRUTH_BOX.minterIdOf(boxId_);
+        bytes32 minterId = BLIND_BOX.minterIdOf(boxId_);
         _calculateAllocation(boxId_, minterId, amount_, settlementToken);
     }
 
@@ -87,11 +71,11 @@ contract FundManager03 is FundManager02 {
 
     /**
      * @dev Allocate rewards
-     * @param boxId_ TruthBox ID
+     * @param boxId_ BlindBox ID
      */
     function _allocationRewards(uint256 boxId_) internal {
         bytes32 buyerId = EXCHANGE.buyerIdOf(boxId_);
-        bytes32 minterId = TRUTH_BOX.minterIdOf(boxId_);
+        bytes32 minterId = BLIND_BOX.minterIdOf(boxId_);
         address token = EXCHANGE.acceptedToken(boxId_);
 
         uint256 amount = _orderAmounts[boxId_][buyerId];

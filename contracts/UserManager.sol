@@ -1,24 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-/**
- *         ██╗    ██╗██╗██╗  ██╗██╗    ████████╗██████╗ ██╗   ██╗████████╗██╗  ██╗
- *         ██║    ██║██║██║ ██╔╝██║    ╚══██╔══╝██╔══██╗██║   ██║╚══██╔══╝██║  ██║
- *         ██║ █╗ ██║██║█████╔╝ ██║       ██║   ██████╔╝██║   ██║   ██║   ███████║
- *         ██║███╗██║██║██╔═██╗ ██║       ██║   ██╔══██╗██║   ██║   ██║   ██╔══██║
- *         ╚███╔███╔╝██║██║  ██╗██║       ██║   ██║  ██║╚██████╔╝   ██║   ██║  ██║
- *          ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚═╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
- *
- *  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
- *  ┃                        Website: https://wikitruth.eth.limo/                         ┃
- *  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
- */
-
 pragma solidity ^0.8.24;
 
-import {Error} from "@marketplace-v1/interfaces/Error.sol";
-import {IAddressManager} from "@marketplace-v1/interfaces/IAddressManager.sol";
-import {IUserManager} from "@marketplace-v1/interfaces/IUserManager.sol";
-import {CoreContracts} from "@marketplace-v1/interfaces/IContracts.sol";
+import {Error} from "@interfaces/Error.sol";
+import {IAddressManager} from "@interfaces/sapphire/IAddressManager.sol";
+import {IUserManager} from "@interfaces/sapphire/IUserManager.sol";
+import {CoreContracts} from "@interfaces/IContracts.sol";
 import {SiweContext} from "@siwe/SiweContext.sol";
 import {IdentitySalt} from "./abstract/IdentitySalt.sol";
 
@@ -39,10 +26,7 @@ contract UserManager is ModifierV2, IUserManager, SiweContext, IdentitySalt {
     constructor(
         address addrManager_,
         bytes memory pers_
-    )
-        ModifierV2(addrManager_)
-        IdentitySalt(pers_)
-    {}
+    ) ModifierV2(addrManager_) IdentitySalt(pers_) {}
 
     // =====================================================================================
 

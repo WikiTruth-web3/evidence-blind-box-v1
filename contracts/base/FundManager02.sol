@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-/**
- *         ██╗    ██╗██╗██╗  ██╗██╗    ████████╗██████╗ ██╗   ██╗████████╗██╗  ██╗
- *         ██║    ██║██║██║ ██╔╝██║    ╚══██╔══╝██╔══██╗██║   ██║╚══██╔══╝██║  ██║
- *         ██║ █╗ ██║██║█████╔╝ ██║       ██║   ██████╔╝██║   ██║   ██║   ███████║
- *         ██║███╗██║██║██╔═██╗ ██║       ██║   ██╔══██╗██║   ██║   ██║   ██╔══██║
- *         ╚███╔███╔╝██║██║  ██╗██║       ██║   ██║  ██║╚██████╔╝   ██║   ██║  ██║
- *          ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚═╝       ╚═╝   ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
- *
- *  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
- *  ┃                        Website: https://wikitruth.eth.limo/                         ┃
- *  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
- */
-
 pragma solidity ^0.8.24;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -21,13 +8,13 @@ import {
     ERC2771Context
 } from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
-// import {ITruthBox} from "@marketplace-v1/interfaces/ITruthBox.sol";
+// import {IBlindBox} from "@interfaces/sapphire/IBlindBox.sol";
 import {
     FundManagerEvents,
     FundsType,
     RewardType
-} from "@marketplace-v1/interfaces/IFundManager.sol";
-import {IExchange} from "@marketplace-v1/interfaces/IExchange.sol";
+} from "@interfaces/sapphire/IFundManager.sol";
+import {IExchange} from "@interfaces/sapphire/IExchange.sol";
 import {SiweContext} from "@siwe/SiweContext.sol";
 
 import {ISwapRouter} from "@uniswap-v3/interfaces/ISwapRouter.sol";
@@ -74,7 +61,7 @@ contract FundManager02 is
 
     /**
      * @dev Internal method: Calculate allocation
-     * @param boxId_ TruthBox ID
+     * @param boxId_ BlindBox ID
      * @param minterId_ Minter userId
      * @param amount_ Amount
      * @param token_ Token address
@@ -173,7 +160,7 @@ contract FundManager02 is
 
     /**
      * @dev Calculate how much tokenIn is needed to swap and how much tokenOut can be swapped
-     * @param boxId_ TruthBox ID
+     * @param boxId_ BlindBox ID
      * @param tokenIn_ Token address (the token to be swapped)
      * @param tokenOut_ Token address (the token to be swapped to)
      * @param amount_ Amount
@@ -229,10 +216,10 @@ contract FundManager02 is
             })
         );
 
-        // step 4: reset the price of TruthBox
+        // step 4: reset the price of BlindBox
         // Because the delay fee must be in the settlementToken,
-        // so we need to reset the price of TruthBox
-        TRUTH_BOX.setPrice(boxId_, totalAmountOut);
+        // so we need to reset the price of BlindBox
+        BLIND_BOX.setPrice(boxId_, totalAmountOut);
 
         return (amountIn_, amountOut_);
     }
@@ -250,7 +237,7 @@ contract FundManager02 is
     /**
      * @dev Withdraw order amounts (Refund or Order , for buyers who failed to participate in bidding)
      * @param token_ Token address
-     * @param list_ List of TruthBox IDs
+     * @param list_ List of BlindBox IDs
      * @param type_ Type of withdrawal, either 0(order) or 1(refund)
      */
     function _withdrawOrderAmounts(

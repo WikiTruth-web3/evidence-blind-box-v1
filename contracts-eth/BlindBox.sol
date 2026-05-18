@@ -1,0 +1,186 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+pragma solidity ^0.8.24;
+
+import {BlindBox03} from "./base/BlindBox03.sol";
+import {IBlindBox, Status} from "@interfaces/eth/IBlindBox.sol";
+import {CoreContracts} from "@interfaces/IContracts.sol";
+
+/**
+ *  @notice BlindBox contract
+ *  Implement basic BlindBox functions, including mint, publish, blacklist, etc.
+ *  Also includes important transaction-related functions, including setPrice, setDeadline, addDeadline, setStatus
+ *  @dev Inherits IBlindBox interface to ensure consistency between interface and implementation
+ */
+
+contract BlindBox is BlindBox03, IBlindBox {
+    // ==================================================================================================
+    constructor(address addrManager_) BlindBox03(addrManager_) {}
+
+    /**
+     * @notice Set the contract address
+     * @dev Get and set the related contract addresses from AddressManager
+     */
+    function setAddress() external onlyManager {
+        _setAddress(CoreContracts.BlindBox);
+    }
+
+    // ==========================================================================================================
+    //                                                 mint Functions
+    // ==========================================================================================================
+
+    /**
+     * @dev Create a truth box
+     * @param boxInfoCID_ The CID of the box info
+     * @param key_ The key of the box
+     * @param price_ The price of the box
+     * @return The ID of the box
+     */
+    function create(
+        string calldata boxInfoCID_,
+        bytes calldata key_,
+        uint256 price_
+    ) external returns (uint256) {
+        return _create(boxInfoCID_, key_, price_);
+    }
+
+    function createAndPublish(
+        string calldata boxInfoCID_
+    ) external returns (uint256) {
+        return _createAndPublish(boxInfoCID_);
+    }
+
+    //==================================================================================================
+    //                                      Setter Functions
+    //==================================================================================================
+
+    function setPrice(
+        uint256 boxId_,
+        uint256 price_
+    ) external onlyProjectContract {
+        _setPrice(boxId_, price_);
+    }
+
+    function addDeadline(
+        uint256 boxId_,
+        uint256 seconds_
+    ) external onlyProjectContract {
+        _addDeadline(boxId_, seconds_);
+    }
+
+    function setStatus(
+        uint256 boxId_,
+        Status status_
+    ) external onlyProjectContract {
+        _setStatus(boxId_, status_);
+    }
+
+    function setBasicData(
+        uint256 boxId_,
+        uint256 price_,
+        Status status_,
+        uint256 deadline_
+    ) external onlyProjectContract {
+        _setPrice(boxId_, price_);
+        _setStatus(boxId_, status_);
+        _setDeadline(boxId_, deadline_);
+    }
+
+    // ==========================================================================================================
+    //                                                delay function
+    // ==========================================================================================================
+    function extendDeadline(uint256 boxId_, uint256 time_) external {
+        _extendDeadline(boxId_, time_);
+    }
+
+    // Safe payment, NFT must not be public and invalid
+    function delay(uint256 boxId_) external {
+        _checkStatus(boxId_, Status.Delaying);
+        _isInWindowPeriod(boxId_);
+        _delay(boxId_);
+    }
+
+    // ==========================================================================================================
+    //                                                 public Functions
+    // ==========================================================================================================
+
+    /**
+     * @dev Publish BlindBox, which minter can call,
+     * If the minter wants to publish, it must be Storing status.
+     */
+    function publishByMinter(uint256 boxId_) external {
+        _checkMinter(boxId_);
+        _checkStatus(boxId_, Status.Storing);
+        _setStatus(boxId_, Status.Published);
+    }
+
+    /**
+     * @dev Publish BlindBox, which administrators can call,
+     * If the buyer wants to publish, it must be Delaying status.
+     */
+    function publishByBuyer(uint256 boxId_) external {
+        _checkBuyer(boxId_);
+        _checkStatus(boxId_, Status.Delaying);
+        _setStatus(boxId_, Status.Published);
+    }
+
+    // ==========================================================================================================
+    //                                                getter Functions
+    // ==========================================================================================================
+
+    function getStatus(uint256 boxId_) external view returns (Status) {
+        return _getStatus(boxId_);
+    }
+
+    function getPrice(uint256 boxId_) external view returns (uint256) {
+        return _basicData[boxId_]._price;
+    }
+
+    function getDeadline(uint256 boxId_) external view returns (uint256) {
+        return _basicData[boxId_]._deadline;
+    }
+
+    // ==========================================================================================================
+
+    /**
+     * @dev Get public data of a box
+     * @param boxId_ The ID of the box
+     * @return status The status of the box
+     * @return price The price of the box
+     * @return deadline The deadline of the box
+     * Everyone can call this function
+     */
+    function getBasicData(
+        uint256 boxId_
+    ) external view returns (Status, uint256, uint256) {
+        Status status = _getStatus(boxId_);
+        return (
+            status,
+            _basicData[boxId_]._price,
+            _basicData[boxId_]._deadline
+        );
+    }
+
+    function getSecretData(
+        uint256 boxId_
+    ) external view returns (bytes memory) {
+        return _getSecretData(boxId_);
+    }
+
+    // ==========================================================================================================
+
+    function minterIdOf(
+        uint256 boxId_
+    ) external view onlyProjectContract returns (bytes32) {
+        return _minterIdOf(boxId_);
+    }
+
+    // ==========================================================================================================
+    function addToBlacklist(uint256 boxId_) external onlyDAO {
+        _addToBlacklist(boxId_);
+    }
+
+    function isInBlacklist(uint256 boxId_) public view returns (bool) {
+        return _basicData[boxId_]._status == Status.Blacklisted;
+    }
+}
